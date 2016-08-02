@@ -21,12 +21,10 @@ public class Executor {
     public static void main(String[] args) {
         int argsLength = args.length;
 
-        if (argsLength == 1) {
-            output = new Output(args[0]);
-        } else if (argsLength >= 2 && argsLength < 4) {
-            input  = new Input(args[0]);
-            output = new Output(args[1]);
-        } else if (argsLength > 3) {
+        if (argsLength == 3) {
+            input  = new Input(args[1]);
+            output = new Output(args[2]);
+        } else if (argsLength == 0 || argsLength > 3) {
             System.err.println("Invalid parameters");
             System.exit(1);
         }
@@ -51,23 +49,18 @@ public class Executor {
                 System.exit(1);
             }
         }
-        if (argsLength == 2) {
-            sorting = new ConcurrentMergesort<>();
-            System.out.print("Executing concurrent sorting. ");
-        } else {
-            switch (args[2]) {
-                case SEQUENTIAL:
-                    sorting = new SequentialMergesort<>();
-                    System.out.print("Executing sequential sorting. ");
-                    break;
-                case CONCURRENT:
-                    sorting = new ConcurrentMergesort<>();
-                    System.out.println("Executing concurrent sorting. ");
-                    break;
-                default:
-                    System.err.println("Invalid parameters");
-                    System.exit(1);
-            }
+        switch (args[0]) {
+            case SEQUENTIAL:
+                sorting = new SequentialMergesort<>();
+                System.out.print("Executing sequential sorting. ");
+                break;
+            case CONCURRENT:
+                sorting = new ConcurrentMergesort<>();
+                System.out.println("Executing concurrent sorting. ");
+                break;
+            default:
+                System.err.println("Invalid parameters");
+                System.exit(1);
         }
         sorting.sort(words);
 
