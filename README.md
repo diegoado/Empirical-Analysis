@@ -3,7 +3,7 @@ Project of Scientific Methodology - UFCG 2016.1
 
 ##### Title: Empirical investigation of parallelism use the sorting problem for large volumes of data.
 
-Usage:  
+Usage:
 sort.sh -a <algorithm> [-i <inputFile>, -o <outputFile>]
 
 Options:
