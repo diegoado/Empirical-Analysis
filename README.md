@@ -1,16 +1,15 @@
 # Empirical-Analysis
 Project of Scientific Methodology - UFCG 2016.1
 
-Title: Empirical investigation of parallelism use the sorting problem
-for large volumes of data.
+##### Title: Empirical investigation of parallelism use the sorting problem for large volumes of data.
 
-Usage:
+Usage:  
 sort.sh -a <algorithm> [-i <inputFile>, -o <outputFile>]
 
 Options:
-	-a = Number of algorithm
-	-i = Input File
-	-o = Output File
+   -a = Number of algorithm
+   -i = Input File
+   -o = Output File
 
 Algorithms:
  1 - Mergesort Sequential
