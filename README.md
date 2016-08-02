@@ -22,8 +22,8 @@ Examples:
 > Sequential mergesort without input and output files
 	bash sort.sh -a 1
 
-> Concurrent mergesort with input and output files.
+> Concurrent mergesort with input and output files
 	bash sort.sh -a 2 -i input.txt -o output.txt
 
-> Concurrent mergesort without input and output files
+> Concurrent mergesort without input and output files  
 	bash sort.sh -a 2
