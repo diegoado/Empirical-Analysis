@@ -1,9 +1,0 @@
-#!/bin/bash
-cd src
-if [ $# -eq 1 ]
-then
-java src.Executor $1
-else
-java src.Executor $1 $2 $3
-fi
-cd ..
