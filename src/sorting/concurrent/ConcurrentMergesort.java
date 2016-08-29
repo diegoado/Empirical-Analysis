@@ -16,24 +16,16 @@ public class ConcurrentMergesort<T extends Comparable<T>> extends SequentialMerg
         T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex+pointMid);
         T[] rightArray = Arrays.copyOfRange(array, leftIndex+pointMid, rightIndex + 1);
 
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sort(leftArray);
-            }
-        });
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sort(rightArray);
-            }
-        });
+        Thread t1 = new Thread(
+                () -> sort(leftArray)
+        );
+        Thread t2 = new Thread(
+                () -> sort(rightArray)
+        );
         t1.run();
         t2.run();
         T[] arrayTemp = merge(leftArray, rightArray);
 
-        for (int i=0; i<arrayTemp.length; i++) {
-            array[leftIndex+i] = arrayTemp[i];
-        }
+        System.arraycopy(arrayTemp, 0, array, leftIndex, arrayTemp.length);
     }
 }

@@ -17,11 +17,9 @@ public class SequentialMergesort<T extends Comparable<T>> extends SortingImpl<T>
 
 		sort(leftArray);
 		sort(rightArray);
-
 		T[] arrayTemp = merge(leftArray, rightArray);
-		for (int i = 0; i < arrayTemp.length; i++) {
-			array[leftIndex + i] = arrayTemp[i];
-		}
+
+		System.arraycopy(arrayTemp, 0, array, leftIndex, arrayTemp.length);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -11,5 +11,5 @@ public interface Sorting<T extends Comparable<T>> {
 	 * that sorts an array from a left index to a right index. 
 	 * See the class SortingImpl for details.  
 	 */
-	public void sort(T[] array);
+	void sort(T[] array);
 }
