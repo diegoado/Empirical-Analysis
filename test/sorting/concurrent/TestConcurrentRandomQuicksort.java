@@ -1,16 +1,18 @@
-package sorting.sequential;
+package sorting.concurrent;
 
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import sorting.sequential.SequentialRandomQuicksort;
 
-public class TestSequentialRandomQuicksort {
+import static org.junit.Assert.assertArrayEquals;
+
+public class TestConcurrentRandomQuicksort {
 	
-	private SequentialRandomQuicksort<Integer> quicksort;
+	private ConcurrentRandomQuicksort<Integer> quicksort;
 	
 	@Before
 	public void createObject() {
-		quicksort = new SequentialRandomQuicksort<>();
+		quicksort = new ConcurrentRandomQuicksort<>();
 	}
 
 	@Test

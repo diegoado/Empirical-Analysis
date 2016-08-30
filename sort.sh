@@ -19,7 +19,7 @@ if [ $ALGORITHM = 1 ]
 then
 	$ALGORITHM = "sequential"
 else
-	$ALGORITHM = "concurrent"
+	$ALGORITHM = "sorting.concurrent"
 fi
   
 # --- Clean

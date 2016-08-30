@@ -16,7 +16,7 @@ public class Executor {
     private static SortingImpl<String> sorting;
 
     private static final String SEQUENTIAL = "sequential";
-    private static final String CONCURRENT = "concurrent";
+    private static final String CONCURRENT = "sorting/concurrent";
 
     public static void main(String[] args) {
         int argsLength = args.length;
@@ -56,7 +56,7 @@ public class Executor {
                 break;
             case CONCURRENT:
                 sorting = new ConcurrentMergesort<>();
-                System.out.println("Executing concurrent sorting. ");
+                System.out.println("Executing sorting.concurrent sorting. ");
                 break;
             default:
                 System.err.println("Invalid parameters");

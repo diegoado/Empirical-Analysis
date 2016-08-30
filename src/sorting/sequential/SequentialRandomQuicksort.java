@@ -7,10 +7,10 @@ import java.util.Random;
 
 public class SequentialRandomQuicksort<T extends Comparable<T>> extends SortingImpl<T> {
 
-    private Random rand = new Random();
+    protected Random rand = new Random();
 
 	@Override
-	protected void sort(T[] array,int leftIndex, int rightIndex) {
+	protected void sort(T[] array, int leftIndex, int rightIndex) {
 		if(leftIndex >= rightIndex) {
 			return;
 		}
@@ -23,7 +23,7 @@ public class SequentialRandomQuicksort<T extends Comparable<T>> extends SortingI
 		sort(array, partitionIndex + 1, rightIndex);
 	}
 
-	private int partition(T[] array, int leftIndex, int rightIndex) {
+	protected int partition(T[] array, int leftIndex, int rightIndex) {
 		int i = leftIndex;
 		int j = rightIndex - 1;
 		T pivot = array[rightIndex];
