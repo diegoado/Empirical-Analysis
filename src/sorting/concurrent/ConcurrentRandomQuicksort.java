@@ -16,7 +16,7 @@ public class ConcurrentRandomQuicksort<T extends Comparable<T>> extends Sequenti
         int partitionIndex = partition(array, leftIndex, rightIndex);
 
         Thread leftThread = new Thread(
-                () -> sort(array, leftIndex ,partitionIndex - 1)
+                () -> sort(array, leftIndex, partitionIndex - 1)
         );
         Thread rightThread = new Thread(
                 () -> sort(array, partitionIndex + 1, rightIndex)

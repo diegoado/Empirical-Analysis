@@ -11,7 +11,7 @@ public class ConcurrentMergesort<T extends Comparable<T>> extends SequentialMerg
         if (leftIndex == rightIndex) {
             return;
         }
-        int pointMid = (rightIndex + 1 - leftIndex) / 2;
+        int pointMid = (rightIndex - leftIndex + 1) / 2;
 
         T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex+pointMid);
         T[] rightArray = Arrays.copyOfRange(array, leftIndex+pointMid, rightIndex + 1);
