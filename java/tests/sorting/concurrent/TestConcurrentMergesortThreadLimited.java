@@ -1,17 +1,17 @@
-package sorting.sequential;
+package sorting.concurrent;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 
-public class TestSequentialMergesort {
+public class TestConcurrentMergesortThreadLimited {
 	
-	private SequentialMergesort<Integer> mergesort;
+	private ConcurrentMergesortThreadLimited<Integer> mergesort;
 	
 	@Before
 	public void createObject() {
-		mergesort = new SequentialMergesort<>();
+		mergesort = new ConcurrentMergesortThreadLimited<>();
 	}
 
 	@Test

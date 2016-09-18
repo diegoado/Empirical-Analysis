@@ -1,17 +1,17 @@
-package sorting.sequential;
+package sorting.concurrent;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 
-public class TestSequentialMergesort {
+public class TestConcurrentRandomQuicksortThreadLimited {
 	
-	private SequentialMergesort<Integer> mergesort;
+	private ConcurrentRandomQuicksortThreadLimited<Integer> quicksort;
 	
 	@Before
 	public void createObject() {
-		mergesort = new SequentialMergesort<>();
+		quicksort = new ConcurrentRandomQuicksortThreadLimited<>();
 	}
 
 	@Test
@@ -19,7 +19,7 @@ public class TestSequentialMergesort {
 		Integer[] array = {40,245,-2,0,15,8,25,-7};
 		Integer[] arrayOrdered = {-7,-2,0,8,15,25,40,245};
 
-		mergesort.sort(array);
+		quicksort.sort(array);
 		assertArrayEquals(arrayOrdered, array);
 	}
 	
@@ -28,7 +28,7 @@ public class TestSequentialMergesort {
 		Integer[] array = {40,245,-2,0,15,8,25,-7};
 		Integer[] arrayOrdered = {40,245,-2,-7,0,8,15,25};
 
-		mergesort.sort(array, 3, 7);
+		quicksort.sort(array, 3, 7);
 		assertArrayEquals(arrayOrdered, array);
 	}
 }
