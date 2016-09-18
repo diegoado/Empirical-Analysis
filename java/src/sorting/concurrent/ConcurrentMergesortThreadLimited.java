@@ -14,19 +14,20 @@ public class ConcurrentMergesortThreadLimited<T extends Comparable<T>> extends S
     }
 
     private void sort(T[] array, int leftIndex, int rightIndex, int cores) {
-        if (rightIndex - leftIndex + 1 <= MIN_THREAD_LEN || cores < 2) {
+        if (rightIndex - leftIndex + 1 < MIN_THREAD_LEN || cores < 2) {
             super.sort(array, leftIndex, rightIndex);
+            return;
         }
-        int pointMid = (rightIndex - leftIndex + 1) / 2;
+        int pointMid = (rightIndex + 1 - leftIndex) / 2;
 
         T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex + pointMid);
         T[] rightArray = Arrays.copyOfRange(array, leftIndex + pointMid, rightIndex + 1);
 
         Thread leftThread = new Thread(
-                () -> sort(leftArray, 0, leftArray.length-1, cores/2)
+                () -> sort(leftArray, 0, leftArray.length-1, cores / 2)
         );
         Thread rightThread = new Thread(
-                () -> sort(rightArray, 0, rightArray.length-1, cores - cores/2)
+                () -> sort(rightArray, 0, rightArray.length-1, cores - cores / 2)
         );
         leftThread.run();
         rightThread.run();

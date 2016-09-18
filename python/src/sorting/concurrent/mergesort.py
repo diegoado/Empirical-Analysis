@@ -16,6 +16,8 @@
 #    under the License.
 
 from threading import Thread
+
+from sorting.concurrent import *
 from sorting.sequential.mergesort import Mergesort
 
 
@@ -47,5 +49,30 @@ class ConcurrentMergesort(Mergesort):
         array[left: left + len(tmp_arr)] = tmp_arr
 
 
+class ConcurrentMergesortThreadLimited(Mergesort):
 
+    def __init__(self):
+        super(ConcurrentMergesortThreadLimited, self).__init__()
 
+    def sort(self, array, left=None, right=None, cores=available_cpu_count()):
+        if not left:
+            left = 0
+        if not right:
+            right = len(array) - 1
+
+        if right - left + 1 < MIN_THREAD_LEN or cores < 2:
+            super(ConcurrentMergesortThreadLimited, self).sort(array, left, right)
+            return
+
+        mid = (right + 1 - left) / 2
+
+        l_arr = array[left:left + mid]
+        r_arr = array[left + mid:right + 1]
+
+        l_thread = Thread(target=self.sort, args=(l_arr,))
+        r_thread = Thread(target=self.sort, args=(r_arr,))
+
+        l_thread.run()
+        r_thread.run()
+        tmp_arr = self.merge(l_arr, r_arr)
+        array[left: left + len(tmp_arr)] = tmp_arr

@@ -16,15 +16,17 @@
 #    under the License.
 
 from threading import Thread
+
+from sorting.concurrent import *
 from sorting.sequential.quicksort import RandomQuicksort
 
 import random
 
 
-class CurrentRandomQuicksort(RandomQuicksort):
+class ConcurrentRandomQuicksort(RandomQuicksort):
 
     def __init__(self):
-        super(CurrentRandomQuicksort, self).__init__()
+        super(ConcurrentRandomQuicksort, self).__init__()
 
     def sort(self, array, left=None, right=None):
         if not left:
@@ -42,6 +44,33 @@ class CurrentRandomQuicksort(RandomQuicksort):
 
         l_thread = Thread(target=self.sort, args=(array, left, ref - 1, ))
         r_thread = Thread(target=self.sort, args=(array, ref + 1, right, ))
+
+        l_thread.run()
+        r_thread.run()
+
+
+class ConcurrentRandomQuicksortThreadLimited(RandomQuicksort):
+
+    def __init__(self):
+        super(ConcurrentRandomQuicksortThreadLimited, self).__init__()
+
+    def sort(self, array, left=None, right=None, cores=available_cpu_count()):
+        if not left:
+            left = 0
+        if not right:
+            right = len(array) - 1
+
+        if right + 1 - left < MIN_THREAD_LEN or cores < 2:
+            super(ConcurrentRandomQuicksortThreadLimited, self).sort(array, left, right)
+            return
+
+        pivot = left + random.randrange(right + 1 - left)
+        array[right], array[pivot] = array[pivot], array[right]
+
+        ref = self.partition(array, left, right)
+
+        l_thread = Thread(target=self.sort, args=(array, left, ref - 1, cores / 2))
+        r_thread = Thread(target=self.sort, args=(array, ref + 1, right, cores - cores / 2))
 
         l_thread.run()
         r_thread.run()

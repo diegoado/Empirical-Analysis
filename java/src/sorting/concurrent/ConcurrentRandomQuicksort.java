@@ -10,7 +10,7 @@ public class ConcurrentRandomQuicksort<T extends Comparable<T>> extends Sequenti
         if(leftIndex >= rightIndex) {
             return;
         }
-        int pivotIndex = leftIndex + rand.nextInt(rightIndex - leftIndex + 1);
+        int pivotIndex = leftIndex + rand.nextInt(rightIndex + 1 - leftIndex);
 
         Util.swap(array, pivotIndex, rightIndex);
         int partitionIndex = partition(array, leftIndex, rightIndex);

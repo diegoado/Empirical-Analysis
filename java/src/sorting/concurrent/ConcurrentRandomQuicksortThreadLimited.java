@@ -13,19 +13,20 @@ public class ConcurrentRandomQuicksortThreadLimited<T extends Comparable<T>> ext
     }
 
     private void sort(T[] array, int leftIndex, int rightIndex, int cores) {
-        if (rightIndex - leftIndex + 1 <= MIN_THREAD_LEN || cores < 2) {
+        if (rightIndex + 1 - leftIndex  < MIN_THREAD_LEN || cores < 2) {
             super.sort(array, leftIndex, rightIndex);
+            return;
         }
-        int pivotIndex = leftIndex + rand.nextInt(rightIndex - leftIndex + 1);
+        int pivotIndex = leftIndex + rand.nextInt(rightIndex + 1 - leftIndex);
 
         Util.swap(array, pivotIndex, rightIndex);
         int partitionIndex = partition(array, leftIndex, rightIndex);
 
         Thread leftThread = new Thread(
-                () -> sort(array, leftIndex, partitionIndex - 1, cores/2)
+                () -> sort(array, leftIndex, partitionIndex - 1, cores / 2)
         );
         Thread rightThread = new Thread(
-                () -> sort(array, partitionIndex + 1, rightIndex, cores - cores/2)
+                () -> sort(array, partitionIndex + 1, rightIndex, cores - cores / 2)
         );
         leftThread.run();
         rightThread.run();
