@@ -15,13 +15,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sorting.sorting import Sorting
+from threading import Thread
+from sorting.sequential.mergesort import Mergesort
 
 
-class Mergesort(Sorting):
+class ConcurrentMergesort(Mergesort):
 
     def __init__(self):
-        super(Mergesort, self).__init__()
+        super(ConcurrentMergesort, self).__init__()
 
     def sort(self, array, left=None, right=None):
         if not left:
@@ -37,33 +38,14 @@ class Mergesort(Sorting):
         l_arr = array[left:left + mid]
         r_arr = array[left + mid:right + 1]
 
-        self.sort(l_arr)
-        self.sort(r_arr)
+        l_thread = Thread(target=self.sort, args=(l_arr, ))
+        r_thread = Thread(target=self.sort, args=(r_arr, ))
 
+        l_thread.run()
+        r_thread.run()
         tmp_arr = self.merge(l_arr, r_arr)
         array[left: left + len(tmp_arr)] = tmp_arr
 
-    @staticmethod
-    def merge(l_arr, r_arr):
-        k = 0
-        i = j = 0
-        tmp_arr = l_arr + r_arr
 
-        while len(l_arr) > i and len(r_arr) > j:
-            if l_arr[i] < r_arr[j]:
-                tmp_arr[k] = l_arr[i]
-                i += 1
-            else:
-                tmp_arr[k] = r_arr[j]
-                j += 1
-            k += 1
-        while i < len(l_arr):
-            tmp_arr[k] = l_arr[i]
-            i += 1
-            k += 1
-        while j < len(r_arr):
-            tmp_arr[k] = r_arr[j]
-            j += 1
-            k += 1
 
-        return tmp_arr
+

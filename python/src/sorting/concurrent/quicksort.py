@@ -15,15 +15,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sorting.sorting import Sorting
+from threading import Thread
+from sorting.sequential.quicksort import RandomQuicksort
 
 import random
 
 
-class RandomQuicksort(Sorting):
+class CurrentRandomQuicksort(RandomQuicksort):
 
     def __init__(self):
-        super(RandomQuicksort, self).__init__()
+        super(CurrentRandomQuicksort, self).__init__()
 
     def sort(self, array, left=None, right=None):
         if not left:
@@ -39,25 +40,8 @@ class RandomQuicksort(Sorting):
 
         ref = self.partition(array, left, right)
 
-        self.sort(array, left, ref - 1)
-        self.sort(array, ref + 1, right)
+        l_thread = Thread(target=self.sort, args=(array, left, ref - 1, ))
+        r_thread = Thread(target=self.sort, args=(array, ref + 1, right, ))
 
-    @staticmethod
-    def partition(array, left, right):
-        i = left
-        j = right - 1
-        pivot = array[right]
-
-        while True:
-            while array[i] < pivot:
-                i += 1
-            while j > 0 and array[j] > pivot:
-                j -= 1
-
-            if i >= j:
-                break
-            else:
-                array[i], array[j] = array[j], array[i]
-
-        array[i], array[right] = array[right], array[i]
-        return i
+        l_thread.run()
+        r_thread.run()
