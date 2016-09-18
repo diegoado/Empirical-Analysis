@@ -14,3 +14,17 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
+import abc
+import six
+
+
+@six.add_metaclass(abc.ABCMeta)
+class Sorting(object):
+
+    def __init__(self):
+        super(Sorting, self).__init__()
+
+    @abc.abstractmethod
+    def sort(self, array, left=None, right=None):
+        raise NotImplementedError
