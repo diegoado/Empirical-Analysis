@@ -32,4 +32,4 @@ def available_cpu_count():
         else:
             return multiprocessing.cpu_count()
     except (IOError, ImportError, NotImplementedError):
-        return 0
+        return 1

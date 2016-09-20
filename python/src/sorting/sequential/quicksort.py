@@ -44,20 +44,17 @@ class RandomQuicksort(Sorting):
 
     @staticmethod
     def partition(array, left, right):
-        i = left
-        j = right - 1
-        pivot = array[right]
+        i = left + 1
+        j = right
+        pivot = array[left]
 
-        while True:
-            while array[i] < pivot:
+        while i <= j:
+            if array[i] <= pivot:
                 i += 1
-            while j > 0 and array[j] > pivot:
+            elif array[j] > pivot:
                 j -= 1
-
-            if i >= j:
-                break
             else:
                 array[i], array[j] = array[j], array[i]
 
-        array[i], array[right] = array[right], array[i]
-        return i
+        array[left], array[j] = array[j], array[left]
+        return j
