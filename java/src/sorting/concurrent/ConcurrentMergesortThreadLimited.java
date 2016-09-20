@@ -3,19 +3,24 @@ package sorting.concurrent;
 import sorting.sequential.SequentialMergesort;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class ConcurrentMergesortThreadLimited<T extends Comparable<T>> extends SequentialMergesort<T> {
 
-    private static final int MIN_THREAD_LEN = 1024;
+    ThreadPoolExecutor executor;
+
+    public ConcurrentMergesortThreadLimited() {
+        this(Runtime.getRuntime().availableProcessors());
+    }
+
+    public ConcurrentMergesortThreadLimited(int nThreads) {
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
+    }
 
     @Override
     protected void sort(T[] array, int leftIndex, int rightIndex) {
-        sort(array, leftIndex, rightIndex, Runtime.getRuntime().availableProcessors());
-    }
-
-    private void sort(T[] array, int leftIndex, int rightIndex, int cores) {
-        if (rightIndex - leftIndex + 1 < MIN_THREAD_LEN || cores < 2) {
-            super.sort(array, leftIndex, rightIndex);
+        if (leftIndex == rightIndex) {
             return;
         }
         int pointMid = (rightIndex + 1 - leftIndex) / 2;
@@ -23,16 +28,26 @@ public class ConcurrentMergesortThreadLimited<T extends Comparable<T>> extends S
         T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex + pointMid);
         T[] rightArray = Arrays.copyOfRange(array, leftIndex + pointMid, rightIndex + 1);
 
-        Thread leftThread = new Thread(
-                () -> sort(leftArray, 0, leftArray.length-1, cores / 2)
+        executor.execute(
+                () -> sort(leftArray, 0, leftArray.length - 1)
         );
-        Thread rightThread = new Thread(
-                () -> sort(rightArray, 0, rightArray.length-1, cores - cores / 2)
+//        Thread leftThread = new Thread(
+//                () -> sort(leftArray, 0, leftArray.length-1, cores / 2)
+//        );
+//        Thread rightThread = new Thread(
+//                () -> sort(rightArray, 0, rightArray.length-1, cores - cores / 2)
+//        );
+        executor.execute(
+                () -> sort(rightArray, 0, rightArray.length - 1)
         );
-        leftThread.run();
-        rightThread.run();
+//        leftThread.run();
+//        rightThread.run();
         T[] arrayTemp = merge(leftArray, rightArray);
 
         System.arraycopy(arrayTemp, 0, array, leftIndex, arrayTemp.length);
+    }
+
+    public void shutDownThreadPoll() {
+        executor.shutdown();
     }
 }

@@ -1,6 +1,7 @@
 import inputOutputService.Input;
 import inputOutputService.Output;
 import sorting.SortingImpl;
+import sorting.concurrent.ConcurrentMergesortThreadLimited;
 import sorting.concurrent.ConcurrentRandomQuicksort;
 import sorting.sequential.SequentialRandomQuicksort;
 
@@ -55,7 +56,7 @@ public class Executor {
                 System.out.print("Executing sequential sorting. ");
                 break;
             case CONCURRENT:
-                sorting = new ConcurrentRandomQuicksort<>();
+                sorting = new ConcurrentMergesortThreadLimited<>();
                 System.out.println("Executing sorting.concurrent sorting. ");
                 break;
             default:

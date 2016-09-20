@@ -1,5 +1,6 @@
 package sorting.concurrent;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,4 +32,9 @@ public class TestConcurrentMergesortThreadLimited {
 		mergesort.sort(array, 3, 7);
 		assertArrayEquals(arrayOrdered, array);
 	}
+
+//	@After
+//	public void shutDownThreadPool() {
+//		mergesort.shutDownThreadPoll();
+//	}
 }
