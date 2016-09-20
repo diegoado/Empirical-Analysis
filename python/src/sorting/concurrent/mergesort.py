@@ -69,10 +69,10 @@ class ConcurrentMergesortThreadLimited(Mergesort):
         l_arr = array[left:left + mid]
         r_arr = array[left + mid:right + 1]
 
-        l_thread = Thread(target=self.sort, args=(l_arr,))
-        r_thread = Thread(target=self.sort, args=(r_arr,))
+        l_thread = Thread(target=self.sort, args=(l_arr, ))
+        r_thread = Thread(target=self.sort, args=(r_arr, ))
 
         l_thread.run()
         r_thread.run()
         tmp_arr = self.merge(l_arr, r_arr)
-        array[left: left + len(tmp_arr)] = tmp_arr
+        array[left:left + len(tmp_arr)] = tmp_arr
