@@ -1,9 +1,10 @@
 import inputOutputService.Input;
 import inputOutputService.Output;
 import sorting.SortingImpl;
-import sorting.concurrent.ConcurrentMergesortThreadLimited;
 import sorting.concurrent.ConcurrentRandomQuicksort;
 import sorting.sequential.SequentialRandomQuicksort;
+import sorting.concurrent.ConcurrentMergesortThreadLimited;
+import sorting.concurrent.ConcurrentRandomQuicksortThreadLimited;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -56,8 +57,8 @@ public class Executor {
                 System.out.print("Executing sequential sorting. ");
                 break;
             case CONCURRENT:
-                sorting = new ConcurrentMergesortThreadLimited<>();
-                System.out.println("Executing sorting.concurrent sorting. ");
+                sorting = new ConcurrentRandomQuicksortThreadLimited<>();
+                System.out.println("Executing concurrent sorting. ");
                 break;
             default:
                 System.err.println("Invalid parameters");
