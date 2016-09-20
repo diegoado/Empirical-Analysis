@@ -1,8 +1,8 @@
 import inputOutputService.Input;
 import inputOutputService.Output;
 import sorting.SortingImpl;
-import sorting.concurrent.ConcurrentMergesort;
-import sorting.sequential.SequentialMergesort;
+import sorting.concurrent.ConcurrentRandomQuicksort;
+import sorting.sequential.SequentialRandomQuicksort;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -16,7 +16,7 @@ public class Executor {
     private static SortingImpl<String> sorting;
 
     private static final String SEQUENTIAL = "sequential";
-    private static final String CONCURRENT = "sorting/concurrent";
+    private static final String CONCURRENT = "concurrent";
 
     public static void main(String[] args) {
         int argsLength = args.length;
@@ -51,11 +51,11 @@ public class Executor {
         }
         switch (args[0]) {
             case SEQUENTIAL:
-                sorting = new SequentialMergesort<>();
+                sorting = new SequentialRandomQuicksort<>();
                 System.out.print("Executing sequential sorting. ");
                 break;
             case CONCURRENT:
-                sorting = new ConcurrentMergesort<>();
+                sorting = new ConcurrentRandomQuicksort<>();
                 System.out.println("Executing sorting.concurrent sorting. ");
                 break;
             default:

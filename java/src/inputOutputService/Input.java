@@ -29,7 +29,7 @@ public class Input {
         }
         RandomAccessFile file = new RandomAccessFile(getPath(), "rw");
         FileChannel channel = file.getChannel();
-        ByteBuffer buffer = ByteBuffer.allocate(72000);
+        ByteBuffer buffer = ByteBuffer.allocate(100000000);
 
         int bytesRead = channel.read(buffer);
         text = new StringBuilder();
@@ -37,8 +37,8 @@ public class Input {
         while (bytesRead != -1) {
             buffer.flip();
             while (buffer.hasRemaining()) {
-                char caractere = (char) buffer.get();
-                text.append(caractere);
+                char c = (char) buffer.get();
+                text.append(c);
             }
 
             text.deleteCharAt(text.length() - 1);

@@ -24,22 +24,20 @@ public class SequentialRandomQuicksort<T extends Comparable<T>> extends SortingI
 	}
 
 	protected int partition(T[] array, int leftIndex, int rightIndex) {
-		int i = leftIndex;
-		int j = rightIndex - 1;
-		T pivot = array[rightIndex];
+		int i = leftIndex + 1;
+		int j = rightIndex;
+		T pivot = array[leftIndex];
 
-        while (true) {
-            while (array[i].compareTo(pivot) < 0)
-                i++;
-            while (j > 0 && array[j].compareTo(pivot) > 0)
-                j--;
-
-            if (i >= j)
-				break;
-			else
+		while(i<=j) {
+			if(array[i].compareTo(pivot) <= 0) {
+				i++;
+			} else if(array[j].compareTo(pivot) > 0) {
+				j--;
+			} else {
 				Util.swap(array, i, j);
+			}
 		}
-		Util.swap(array, i, rightIndex);
-		return i;
+		Util.swap(array, leftIndex, j);
+		return j;
 	}
 }
