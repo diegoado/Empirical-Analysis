@@ -8,28 +8,22 @@ import java.io.IOException;
 public class Output {
 
     private File file;
-    private String path;
 
     public Output(String path) {
-        this.path = path;
         file = new File(path);
+
+        // Create a folder if it no exists
+        file.getParentFile().mkdirs();
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public void saveFile(String[] linhas) throws IOException {
-        if(!file.exists())
+    public void saveFile(String[] lines) throws IOException {
+        if (!file.exists())
+            // Create the file if it no exists
             file.createNewFile();
         FileWriter writer = new FileWriter(file);
         BufferedWriter buffered = new BufferedWriter(writer);
 
-        for (String string : linhas) {
+        for (String string : lines) {
             buffered.write(string);
             buffered.write(Input.LINE_BREAK);
         }

@@ -3,36 +3,54 @@ package sorting.concurrent;
 import sorting.sequential.SequentialMergesort;
 
 import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 public class ConcurrentMergesortThreadLimited<T extends Comparable<T>> extends SequentialMergesort<T> {
 
-    private static final int MIN_THREAD_LEN = 1024;
+    private ForkJoinPool executor;
+
+    public ConcurrentMergesortThreadLimited() {
+        executor = new ForkJoinPool();
+    }
+
+    public ConcurrentMergesortThreadLimited(int nThreads) {
+        executor = new ForkJoinPool(nThreads);
+    }
 
     @Override
     protected void sort(T[] array, int leftIndex, int rightIndex) {
-        sort(array, leftIndex, rightIndex, Runtime.getRuntime().availableProcessors());
+        executor.invoke(new MergesortTask(array, leftIndex, rightIndex));
     }
 
-    private void sort(T[] array, int leftIndex, int rightIndex, int cores) {
-        if (rightIndex - leftIndex + 1 < MIN_THREAD_LEN || cores < 2) {
-            super.sort(array, leftIndex, rightIndex);
-            return;
+    @SuppressWarnings("unchecked")
+    private class MergesortTask extends RecursiveAction {
+
+        private T[] array;
+        private int leftIndex, rightIndex;
+
+        private MergesortTask(T[] array, int leftIndex, int rightIndex) {
+            this.array = array;
+            this.leftIndex = leftIndex;
+            this.rightIndex = rightIndex;
         }
-        int pointMid = (rightIndex + 1 - leftIndex) / 2;
 
-        T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex + pointMid);
-        T[] rightArray = Arrays.copyOfRange(array, leftIndex + pointMid, rightIndex + 1);
+        @Override
+        protected void compute() {
+            if (leftIndex == rightIndex) {
+                return;
+            }
+            int pointMid = (rightIndex + 1 - leftIndex) / 2;
 
-        Thread leftThread = new Thread(
-                () -> sort(leftArray, 0, leftArray.length-1, cores / 2)
-        );
-        Thread rightThread = new Thread(
-                () -> sort(rightArray, 0, rightArray.length-1, cores - cores / 2)
-        );
-        leftThread.run();
-        rightThread.run();
-        T[] arrayTemp = merge(leftArray, rightArray);
+            T[] leftArray = Arrays.copyOfRange(array, leftIndex, leftIndex + pointMid);
+            T[] rightArray = Arrays.copyOfRange(array, leftIndex + pointMid, rightIndex + 1);
 
-        System.arraycopy(arrayTemp, 0, array, leftIndex, arrayTemp.length);
+            MergesortTask lTask = new MergesortTask(leftArray, 0, leftArray.length - 1);
+            MergesortTask rTask = new MergesortTask(rightArray, 0, rightArray.length - 1);
+
+            invokeAll(lTask, rTask);
+            T[] arrayTemp = merge(leftArray, rightArray);
+            System.arraycopy(arrayTemp, 0, array, leftIndex, arrayTemp.length);
+        }
     }
 }
