@@ -15,9 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from ioService import Input
-from ioService import Output
-from datetime import datetime
+from io_service import Input
+from io_service import Output
 from sorting.sequential.mergesort import Mergesort
 from sorting.sequential.quicksort import RandomQuicksort
 from sorting.concurrent.mergesort import ConcurrentMergesort
@@ -25,19 +24,21 @@ from sorting.concurrent.quicksort import ConcurrentRandomQuicksort
 from sorting.concurrent.mergesort import ConcurrentMergesortThreadLimited
 from sorting.concurrent.quicksort import ConcurrentRandomQuicksortThreadLimited
 
+import datetime
 
-OUT_PATH = './../output/python%s.csv'
+OUT_PATH = './../../output/python%s.csv'
 INPUT_FOLDER = './../../entrance/input%s.txt'
 
 FILES_NAME = ['SeqMerge', 'SeqQuick', 'ConcMerge', 'ConcQuick', 'ConcMergeLtd', 'ConcQuickLtd']
 
 
-class GenerationOutput(object):
+class GenerationSample(object):
 
     def __init__(self):
-        super(GenerationOutput, self).__init__()
+        super(GenerationSample, self).__init__()
 
-    def execute(self):
+    @staticmethod
+    def run():
         algorithms = [
             Mergesort(), RandomQuicksort(), ConcurrentMergesort(),
             ConcurrentRandomQuicksort(), ConcurrentMergesortThreadLimited(), ConcurrentRandomQuicksortThreadLimited()
@@ -47,15 +48,15 @@ class GenerationOutput(object):
         for i in range(6):
             for j in range(50):
                 f_input = Input(INPUT_FOLDER % (j + 1))
-                mean = 0.
+                mean = 0
                 for k in range(10):
                     f = f_input.get_file()
 
-                    start = datetime.now()
+                    ini_time = datetime.datetime.now()
                     algorithms[i].sort(f)
-                    end = datetime.now()
+                    end_time = datetime.datetime.now()
 
-                    mean += (end - start).total_seconds() * 1000
+                    mean += (end_time - ini_time).total_seconds() * 1000
 
                 mean /= 10.
                 out_files[i].append(mean)

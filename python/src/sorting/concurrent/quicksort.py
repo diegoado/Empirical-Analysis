@@ -15,8 +15,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from threading import Thread
-
 from sorting.concurrent import *
 from sorting.sequential.quicksort import RandomQuicksort
 
@@ -42,8 +40,8 @@ class ConcurrentRandomQuicksort(RandomQuicksort):
 
         ref = self.partition(array, left, right)
 
-        l_thread = Thread(target=self.sort, args=(array, left, ref - 1, ))
-        r_thread = Thread(target=self.sort, args=(array, ref + 1, right, ))
+        l_thread = multiprocessing.Process(target=self.sort, args=(array, left, ref - 1, ))
+        r_thread = multiprocessing.Process(target=self.sort, args=(array, ref + 1, right, ))
 
         l_thread.run()
         r_thread.run()
@@ -69,8 +67,8 @@ class ConcurrentRandomQuicksortThreadLimited(RandomQuicksort):
 
         ref = self.partition(array, left, right)
 
-        l_thread = Thread(target=self.sort, args=(array, left, ref - 1, cores / 2))
-        r_thread = Thread(target=self.sort, args=(array, ref + 1, right, cores - cores / 2))
+        l_thread = multiprocessing.Process(target=self.sort, args=(array, left, ref - 1, cores / 2))
+        r_thread = multiprocessing.Process(target=self.sort, args=(array, ref + 1, right, cores - cores / 2))
 
         l_thread.run()
         r_thread.run()

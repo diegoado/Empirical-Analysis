@@ -15,10 +15,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from threading import Thread
-
 from sorting.concurrent import *
 from sorting.sequential.mergesort import Mergesort
+from concurrent.futures import ProcessPoolExecutor
 
 
 class ConcurrentMergesort(Mergesort):
@@ -40,8 +39,8 @@ class ConcurrentMergesort(Mergesort):
         l_arr = array[left:left + mid]
         r_arr = array[left + mid:right + 1]
 
-        l_thread = Thread(target=self.sort, args=(l_arr, ))
-        r_thread = Thread(target=self.sort, args=(r_arr, ))
+        l_thread = multiprocessing.Process(target=self.sort, args=(l_arr, ))
+        r_thread = multiprocessing.Process(target=self.sort, args=(r_arr, ))
 
         l_thread.run()
         r_thread.run()
@@ -51,17 +50,18 @@ class ConcurrentMergesort(Mergesort):
 
 class ConcurrentMergesortThreadLimited(Mergesort):
 
-    def __init__(self):
+    def __init__(self, n_threads=available_cpu_count()):
         super(ConcurrentMergesortThreadLimited, self).__init__()
 
-    def sort(self, array, left=None, right=None, cores=available_cpu_count()):
+        self.executor = ProcessPoolExecutor(n_threads)
+
+    def sort(self, array, left=None, right=None):
         if not left:
             left = 0
         if not right:
             right = len(array) - 1
 
-        if right - left + 1 < MIN_THREAD_LEN or cores < 2:
-            super(ConcurrentMergesortThreadLimited, self).sort(array, left, right)
+        if left == right:
             return
 
         mid = (right + 1 - left) / 2
@@ -69,8 +69,8 @@ class ConcurrentMergesortThreadLimited(Mergesort):
         l_arr = array[left:left + mid]
         r_arr = array[left + mid:right + 1]
 
-        l_thread = Thread(target=self.sort, args=(l_arr, ))
-        r_thread = Thread(target=self.sort, args=(r_arr, ))
+        l_thread = multiprocessing.Process(target=self.sort, args=(l_arr, ))
+        r_thread = multiprocessing.Process(target=self.sort, args=(r_arr, ))
 
         l_thread.run()
         r_thread.run()
