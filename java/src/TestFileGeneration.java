@@ -37,7 +37,7 @@ public class TestFileGeneration {
 			for (int j = 0; j < 50; j++) {
 				input = new Input(String.format(PATH, j+1));
 				media = 0l;
-				for (int k = 0; k < 10; k++){
+				for (int k = 0; k < 10; k++) {
 					try {
 						words = input.getFile();
 					} catch (IOException e) {
