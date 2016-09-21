@@ -12,31 +12,32 @@ import sorting.concurrent.ConcurrentRandomQuicksortThreadLimited;
 import sorting.sequential.SequentialMergesort;
 import sorting.sequential.SequentialRandomQuicksort;
 
-public class TestFileGeneration {
+public class GenerationSample {
 
 	private static final String PATH = "/home/renato/entrance/input%d.txt";
 	private static final String OUT_PATH = "/home/renato/output/java%s.csv";
 	private static final String[] FILES_NAMES = new String[]{"seqQuick","seqMerge","concQuick","concQuickLtd","concMerge","concMergeLtd"};
-	private static Output out;
-	private static Input input;
 
-	public static void main(String[] args){
-		List<SortingImpl<String>> algoritimos = new ArrayList<>();
-		algoritimos.add(new SequentialRandomQuicksort<>());
-		algoritimos.add(new SequentialMergesort<>());
-		algoritimos.add(new ConcurrentRandomQuicksort<>());
-		algoritimos.add(new ConcurrentRandomQuicksortThreadLimited<>());
-		algoritimos.add(new ConcurrentMergesort<>());
-		algoritimos.add(new ConcurrentMergesortThreadLimited<>());
+	public static void main(String[] args) {
+		List<SortingImpl<String>> algorithms = new ArrayList<>();
 
-		String[][] outputFiles = new String[6][50];
+		algorithms.add(new SequentialRandomQuicksort<>());
+		algorithms.add(new SequentialMergesort<>());
+		algorithms.add(new ConcurrentRandomQuicksort<>());
+		algorithms.add(new ConcurrentRandomQuicksortThreadLimited<>());
+		algorithms.add(new ConcurrentMergesort<>());
+		algorithms.add(new ConcurrentMergesortThreadLimited<>());
+
+		double media;
+		long iniTime, endTime;
+
 		String[] words = null;
-		Long media;
+		String[][] outputFiles = new String[6][50];
 
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 50; j++) {
-				input = new Input(String.format(PATH, j+1));
-				media = 0l;
+				Input input = new Input(String.format(PATH, j + 1));
+				media = 0;
 				for (int k = 0; k < 10; k++) {
 					try {
 						words = input.getFile();
@@ -45,16 +46,17 @@ public class TestFileGeneration {
 						System.exit(1);
 					}
 
-					long startTime = System.nanoTime();
-					algoritimos.get(i).sort(words);
-					long finishTime = System.nanoTime();
+					iniTime = System.nanoTime();
+					algorithms.get(i).sort(words);
+					endTime = System.nanoTime();
 
-					media = media + (finishTime - startTime);
+					// Calculating time difference in Milliseconds
+					media += (endTime - iniTime) / 1e6;
 				}
-				outputFiles[i][j] = String.valueOf(media/10l);
+				outputFiles[i][j] = String.valueOf(media / 10);
 			}
 			
-			out = new Output(String.format(OUT_PATH, FILES_NAMES[i]));
+			Output out = new Output(String.format(OUT_PATH, FILES_NAMES[i]));
 			try {
 				out.saveFile(outputFiles[i]);
 			} catch (IOException e) {
