@@ -33,11 +33,11 @@ public class TestFileGeneration {
 		String[] words = null;
 		Long media;
 
-		for(int i = 0; i < 6; i++){
-			for(int j = 0; j < 50;j++){
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 50; j++) {
 				input = new Input(String.format(PATH, j+1));
 				media = 0l;
-				for(int k=0; k < 10; k++){
+				for (int k = 0; k < 10; k++){
 					try {
 						words = input.getFile();
 					} catch (IOException e) {
@@ -49,7 +49,7 @@ public class TestFileGeneration {
 					algoritimos.get(i).sort(words);
 					long finishTime = System.nanoTime();
 
-					media = media + (finishTime-startTime);
+					media = media + (finishTime - startTime);
 				}
 				outputFiles[i][j] = String.valueOf(media/10l);
 			}

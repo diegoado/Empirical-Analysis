@@ -15,19 +15,11 @@ public class Input {
         this.path = path;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public String[] getFile() throws IOException {
         if(text != null){
             return text.toString().split(LINE_BREAK);
         }
-        RandomAccessFile file = new RandomAccessFile(getPath(), "rw");
+        RandomAccessFile file = new RandomAccessFile(path, "r");
         FileChannel channel = file.getChannel();
         ByteBuffer buffer = ByteBuffer.allocate(100000000);
 
