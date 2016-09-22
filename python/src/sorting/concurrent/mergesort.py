@@ -15,9 +15,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sorting.concurrent import *
+from sorting.concurrent import _pickle_method
+from sorting.concurrent import available_cpu_count
 from sorting.sequential.mergesort import Mergesort
-from concurrent.futures import ProcessPoolExecutor
+
+import math
+import types
+import copy_reg
+import multiprocessing
 
 
 class ConcurrentMergesort(Mergesort):
@@ -53,7 +58,8 @@ class ConcurrentMergesortThreadLimited(Mergesort):
     def __init__(self, n_threads=available_cpu_count()):
         super(ConcurrentMergesortThreadLimited, self).__init__()
 
-        self.executor = ProcessPoolExecutor(n_threads)
+        self.processes = n_threads
+        copy_reg.pickle(types.MethodType, _pickle_method)
 
     def sort(self, array, left=None, right=None):
         if not left:
@@ -61,18 +67,35 @@ class ConcurrentMergesortThreadLimited(Mergesort):
         if not right:
             right = len(array) - 1
 
-        if left == right:
-            return
+        work_arr = array[left:right + 1]
+        pool = multiprocessing.Pool(self.processes)
 
-        mid = (right + 1 - left) / 2
+        size = int(math.ceil(float(right + 1 - left) / self.processes))
+        work_arr = [work_arr[i * size:(i + 1) * size] for i in range(min(self.processes, right + 1 - left))]
+        work_arr = pool.map(self.sort_parallel, work_arr)
 
-        l_arr = array[left:left + mid]
-        r_arr = array[left + mid:right + 1]
+        while len(work_arr) > 1:
+            extra = work_arr.pop() if len(work_arr) % 2 == 1 else None
+            work_arr = [(work_arr[i], work_arr[i + 1]) for i in range(0, len(work_arr), 2)]
+            work_arr = pool.map(self.merge, work_arr) + ([extra] if extra else [])
 
-        l_thread = multiprocessing.Process(target=self.sort, args=(l_arr, ))
-        r_thread = multiprocessing.Process(target=self.sort, args=(r_arr, ))
+        array[left: left + right + 1] = work_arr[0]
 
-        l_thread.run()
-        r_thread.run()
-        tmp_arr = self.merge(l_arr, r_arr)
-        array[left:left + len(tmp_arr)] = tmp_arr
+    def sort_parallel(self, array):
+        length = len(array)
+        if length <= 1:
+            return array
+
+        middle = length / 2
+        l_arr = self.sort_parallel(array[:middle])
+        r_arr = self.sort_parallel(array[middle:])
+
+        return Mergesort.merge(l_arr, r_arr)
+
+    def merge(self, *args):
+        if len(args) == 1:
+            l_arr, r_arr = args[0]
+        else:
+            l_arr, r_arr = args
+
+        return super(ConcurrentMergesortThreadLimited, self).merge(l_arr, r_arr)
