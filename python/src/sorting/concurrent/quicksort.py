@@ -15,7 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sorting.concurrent import *
+from multiprocessing import Process, Pipe
+from sorting.concurrent import available_cpu_count
 from sorting.sequential.quicksort import RandomQuicksort
 
 import random
@@ -32,43 +33,89 @@ class ConcurrentRandomQuicksort(RandomQuicksort):
         if not right:
             right = len(array) - 1
 
-        if left >= right:
+        parent_conn, child_conn = Pipe()
+
+        p = Process(target=self.sort_parallel, args=(array[left:left + right + 1], child_conn, ))
+        p.start()
+
+        array[left:left + right + 1] = parent_conn.recv()
+        p.join()
+
+    def sort_parallel(self, array, conn):
+        if len(array) <= 1:
+            conn.send(array)
+            conn.close()
             return
 
-        pivot = left + random.randrange(right + 1 - left)
-        array[right], array[pivot] = array[pivot], array[right]
+        pivot = array.pop(random.randint(0, len(array) - 1))
+        l_arr = [x for x in array if x < pivot]
+        r_arr = [x for x in array if x >= pivot]
 
-        ref = self.partition(array, left, right)
+        parent_conn_left, child_conn_left = Pipe()
+        left_proc = Process(target=self.sort_parallel, args=(l_arr, child_conn_left, ))
 
-        l_thread = multiprocessing.Process(target=self.sort, args=(array, left, ref - 1, ))
-        r_thread = multiprocessing.Process(target=self.sort, args=(array, ref + 1, right, ))
+        parent_conn_right, child_conn_right = Pipe()
+        right_proc = Process(target=self.sort_parallel, args=(r_arr, child_conn_right, ))
 
-        l_thread.run()
-        r_thread.run()
+        left_proc.start()
+        right_proc.start()
+
+        conn.send(parent_conn_left.recv() + [pivot] + parent_conn_right.recv())
+        conn.close()
+
+        left_proc.join()
+        right_proc.join()
 
 
-class ConcurrentRandomQuicksortThreadLimited(RandomQuicksort):
+class ConcurrentRandomQuicksortThreadLimited(ConcurrentRandomQuicksort):
 
-    def __init__(self):
+    def __init__(self, n_threads=available_cpu_count()):
         super(ConcurrentRandomQuicksortThreadLimited, self).__init__()
 
-    def sort(self, array, left=None, right=None, cores=available_cpu_count()):
+        self.processes = n_threads
+
+    def sort(self, array, left=None, right=None):
         if not left:
             left = 0
         if not right:
             right = len(array) - 1
 
-        if right + 1 - left < MIN_THREAD_LEN or cores < 2:
-            super(ConcurrentRandomQuicksortThreadLimited, self).sort(array, left, right)
+        parent_conn, child_conn = Pipe()
+
+        p = Process(target=self.sort_parallel, args=(array[left:left + right + 1], child_conn, self.processes))
+        p.start()
+
+        array[left:left + right + 1] = parent_conn.recv()
+        p.join()
+
+    def sort_parallel(self, array, conn, processes=None):
+        if processes <= 0 or len(array) <= 1:
+            conn.send(self.quick(array))
+            conn.close()
             return
 
-        pivot = left + random.randrange(right + 1 - left)
-        array[right], array[pivot] = array[pivot], array[right]
+        pivot = array.pop(random.randint(0, len(array) - 1))
+        l_arr = [x for x in array if x < pivot]
+        r_arr = [x for x in array if x >= pivot]
 
-        ref = self.partition(array, left, right)
+        parent_conn_left, child_conn_left = Pipe()
+        left_proc = Process(target=self.sort_parallel, args=(l_arr, child_conn_left, processes - 1))
 
-        l_thread = multiprocessing.Process(target=self.sort, args=(array, left, ref - 1, cores / 2))
-        r_thread = multiprocessing.Process(target=self.sort, args=(array, ref + 1, right, cores - cores / 2))
+        parent_conn_right, child_conn_right = Pipe()
+        right_proc = Process(target=self.sort_parallel, args=(r_arr, child_conn_right, processes - 1))
 
-        l_thread.run()
-        r_thread.run()
+        left_proc.start()
+        right_proc.start()
+
+        conn.send(parent_conn_left.recv() + [pivot] + parent_conn_right.recv())
+        conn.close()
+
+        left_proc.join()
+        right_proc.join()
+
+    def quick(self, array):
+        if len(array) <= 1:
+            return array
+
+        pivot = array.pop(random.randint(0, len(array) - 1))
+        return self.quick([x for x in array if x < pivot]) + [pivot] + self.quick([x for x in array if x >= pivot])

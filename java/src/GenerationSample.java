@@ -30,9 +30,9 @@ public class GenerationSample {
 		algorithms.add(new SequentialRandomQuicksort<>());
 		algorithms.add(new SequentialMergesort<>());
 		algorithms.add(new ConcurrentRandomQuicksort<>());
-		algorithms.add(new ConcurrentRandomQuicksortThreadLimited<>());
+		algorithms.add(new ConcurrentRandomQuicksortThreadLimited<>(8));
 		algorithms.add(new ConcurrentMergesort<>());
-		algorithms.add(new ConcurrentMergesortThreadLimited<>());
+		algorithms.add(new ConcurrentMergesortThreadLimited<>(8));
 
 		double media;
 		long iniTime, endTime;
@@ -60,8 +60,7 @@ public class GenerationSample {
 					// Calculating time difference in Milliseconds
 					media += (endTime - iniTime) / 1e6;
 				}
-				System.out.printf("%.4f\n", media / 10);
-				outputFiles[i][j + 1] = String.format(new Locale("en", "US"), "%d;%.4f", words.length, media / 10);
+ 				outputFiles[i][j + 1] = String.format(new Locale("en", "US"), "%d;%.4f", words.length, media / 10);
 			}
 			
 			Output out = new Output(String.format(testPath, FILES_NAMES[i]));
