@@ -17,7 +17,7 @@ public class GenerationData {
 
     public static void main(String[] args) {
         int l = FILES_LEN.length;
-        String path = new File(System.getProperty("user.dir")).getParent() + FILES_FOLDER;
+        String path = System.getProperty("user.dir") + FILES_FOLDER;
 
         for (int i = 0; i < 50; i++) {
             Output out = new Output(String.format(path, i + 1));

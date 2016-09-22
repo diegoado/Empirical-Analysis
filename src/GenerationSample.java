@@ -23,7 +23,7 @@ public class GenerationSample {
 	private static final String[] FILES_NAMES = new String[]{"SeqQuick", "SeqMerge", "ConcQuick", "ConcQuickLtd", "ConcMerge", "ConcMergeLtd"};
 
 	public static void main(String[] args) {
-		String basePath = new File(System.getProperty("user.dir")).getParent();
+		String basePath = System.getProperty("user.dir");
 		String dataPath = basePath + INPUT_FOLDER;
 		String testPath = basePath + OUTPUT_FOLDER;
 		
